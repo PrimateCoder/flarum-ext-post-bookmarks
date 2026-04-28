@@ -11,7 +11,7 @@ export default class BookmarkButton extends Component {
         const bookmarked = post.attribute('bookmarked');
 
         return Button.component({
-            className: className + (bookmarked ? ' Button--bookmarked' : ''),
+            className: (className || '') + (bookmarked ? ' Button--bookmarked' : ''),
             icon: bookmarked ? 'fas fa-bookmark' : 'far fa-bookmark',
             onclick() {
                 post.save({

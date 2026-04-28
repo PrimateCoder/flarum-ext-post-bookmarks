@@ -5,6 +5,7 @@ namespace ClarkWinkelmann\PostBookmarks\Tests\integration\api;
 use Carbon\Carbon;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class BookmarkFilterTest extends TestCase
 {
@@ -19,10 +20,10 @@ class BookmarkFilterTest extends TestCase
         $this->prepareDatabase([
             'users' => [
                 $this->normalUser(),
-                ['id' => 3, 'username' => 'user3', 'email' => 'user3@machine.local', 'is_email_confirmed' => 1],
+                ['id' => 3, 'username' => 'user3', 'password' => $this->normalUser()['password'], 'email' => 'user3@machine.local', 'is_email_confirmed' => 1],
             ],
             'discussions' => [
-                ['id' => 1, 'title' => 'Discussion 1', 'created_at' => Carbon::now(), 'last_posted_at' => Carbon::now(), 'user_id' => 1, 'first_post_id' => 1, 'comment_count' => 3],
+                ['id' => 1, 'title' => 'Discussion 1', 'slug' => 'test', 'created_at' => Carbon::now(), 'last_posted_at' => Carbon::now(), 'user_id' => 1, 'first_post_id' => 1, 'comment_count' => 3],
             ],
             'posts' => [
                 ['id' => 1, 'number' => 1, 'discussion_id' => 1, 'created_at' => Carbon::now(), 'user_id' => 1, 'type' => 'comment', 'content' => '<t><p>post one</p></t>'],
@@ -37,7 +38,7 @@ class BookmarkFilterTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function returns_bookmarked_posts_for_current_user()
     {
         $response = $this->send(
@@ -59,7 +60,7 @@ class BookmarkFilterTest extends TestCase
         $this->assertContains('3', $ids);
     }
 
-    /** @test */
+    #[Test]
     public function returns_empty_when_no_bookmarks()
     {
         // User 1 (admin) has no bookmarks
@@ -78,7 +79,7 @@ class BookmarkFilterTest extends TestCase
         $this->assertCount(0, $json['data']);
     }
 
-    /** @test */
+    #[Test]
     public function only_returns_current_users_bookmarks()
     {
         // User 3 bookmarked only post 2
@@ -99,7 +100,7 @@ class BookmarkFilterTest extends TestCase
         $this->assertContains('2', $ids);
     }
 
-    /** @test */
+    #[Test]
     public function combines_with_type_filter()
     {
         $response = $this->send(
@@ -119,7 +120,7 @@ class BookmarkFilterTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function negate_filter_returns_unbookmarked_posts()
     {
         $response = $this->send(
@@ -141,7 +142,7 @@ class BookmarkFilterTest extends TestCase
         $this->assertNotContains('3', $ids);
     }
 
-    /** @test */
+    #[Test]
     public function guest_filter_returns_empty()
     {
         $response = $this->send(

@@ -1,9 +1,4 @@
-import addDiscussionControls from './addDiscussionControls';
-import addPage from './addPage';
+import './addDiscussionControls';
+import './addPage';
 
-/* global app */
-
-app.initializers.add('clarkwinkelmann-post-bookmarks', () => {
-    addDiscussionControls();
-    addPage();
-});
+export { default as extend } from './extend';

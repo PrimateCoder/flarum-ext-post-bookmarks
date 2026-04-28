@@ -3,6 +3,7 @@
 namespace ClarkWinkelmann\PostBookmarks\Tests\integration\api;
 
 use Flarum\Testing\integration\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SettingsTest extends TestCase
 {
@@ -13,7 +14,7 @@ class SettingsTest extends TestCase
         $this->extension('clarkwinkelmann-post-bookmarks');
     }
 
-    /** @test */
+    #[Test]
     public function button_position_setting_serialized_to_forum()
     {
         $this->setting('post-bookmarks.buttonPosition', 'actions');
@@ -31,7 +32,7 @@ class SettingsTest extends TestCase
         $this->assertEquals('actions', $json['data']['attributes']['post-bookmarks.buttonPosition']);
     }
 
-    /** @test */
+    #[Test]
     public function header_badge_setting_serialized_to_forum()
     {
         $this->setting('post-bookmarks.headerBadge', '1');
@@ -49,7 +50,7 @@ class SettingsTest extends TestCase
         $this->assertTrue($json['data']['attributes']['post-bookmarks.headerBadge']);
     }
 
-    /** @test */
+    #[Test]
     public function default_values_present()
     {
         $response = $this->send(

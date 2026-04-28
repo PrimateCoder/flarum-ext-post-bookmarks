@@ -4,8 +4,9 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Button from 'flarum/common/components/Button';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import Link from 'flarum/common/components/Link';
-import IndexPage from 'flarum/forum/components/IndexPage';
-import listItems from 'flarum/common/helpers/listItems';
+import PageStructure from 'flarum/forum/components/PageStructure';
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
+import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 
 /* global m, app */
 
@@ -32,19 +33,13 @@ export default class BookmarksPage extends Page {
 
     view() {
         return (
-            <div className="IndexPage">
-                {IndexPage.prototype.hero()}
-                <div className="container">
-                    <div className="sideNavContainer">
-                        <nav className="IndexPage-nav sideNav">
-                            <ul>{listItems(IndexPage.prototype.sidebarItems().toArray())}</ul>
-                        </nav>
-                        <div className="IndexPage-results sideNavOffset">
-                            {this.content()}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <PageStructure
+                className="IndexPage"
+                hero={() => <WelcomeHero />}
+                sidebar={() => <IndexSidebar />}
+            >
+                {this.content()}
+            </PageStructure>
         );
     }
 

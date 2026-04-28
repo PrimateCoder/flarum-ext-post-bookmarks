@@ -1,24 +1,16 @@
 import {extend} from 'flarum/common/extend';
-import IndexPage from 'flarum/forum/components/IndexPage';
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import LinkButton from 'flarum/common/components/LinkButton';
-import BookmarksPage from './components/BookmarksPage';
 
-/* global m, app */
+/* global app */
 
-export default function () {
-    app.routes.postBookmarks = {
-        path: '/bookmarked-posts',
-        component: BookmarksPage,
-    };
+extend(IndexSidebar.prototype, 'navItems', function (items) {
+    if (!app.session.user) {
+        return;
+    }
 
-    extend(IndexPage.prototype, 'navItems', function (items) {
-        if (!app.session.user) {
-            return;
-        }
-
-        items.add('post-bookmarks', LinkButton.component({
-            href: app.route('postBookmarks'),
-            icon: 'fas fa-bookmark',
-        }, app.translator.trans('clarkwinkelmann-post-bookmarks.forum.page.link')));
-    });
-}
+    items.add('post-bookmarks', LinkButton.component({
+        href: app.route('postBookmarks'),
+        icon: 'fas fa-bookmark',
+    }, app.translator.trans('clarkwinkelmann-post-bookmarks.forum.page.link')));
+});

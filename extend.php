@@ -2,13 +2,11 @@
 
 namespace ClarkWinkelmann\PostBookmarks;
 
-use Flarum\Api\Controller;
-use Flarum\Api\Serializer\PostSerializer;
-use Flarum\Discussion\Discussion;
+use Flarum\Api\Resource\PostResource;
 use Flarum\Extend;
-use Flarum\Post\Event\Saving;
-use Flarum\Post\Filter\PostFilterer;
+use Flarum\Post\Filter\PostSearcher;
 use Flarum\Post\Post;
+use Flarum\Search\Database\DatabaseSearchDriver;
 use Flarum\User\User;
 use Illuminate\Database\Eloquent\Relations;
 
@@ -27,35 +25,14 @@ return [
             return $post->belongsToMany(User::class, 'post_user_bookmark', 'post_id')->withTimestamps();
         })
         ->relationship('bookmarkState', function (Post $post): Relations\HasOne {
-            $user = BookmarkablePost::getStateUser();
-
-            return $post->hasOne(UserState::class, 'post_id')->where('user_id', $user ? $user->id : null);
+            return $post->hasOne(UserState::class, 'post_id');
         }),
 
-    (new Extend\ApiController(Controller\ListPostsController::class))
-        ->addInclude('bookmarkState'),
+    (new Extend\ApiResource(PostResource::class))
+        ->fields(Api\PostResourceFields::class),
 
-    (new Extend\ApiController(Controller\ShowDiscussionController::class))
-        ->addInclude('posts.bookmarkState'),
-
-    (new Extend\ApiSerializer(PostSerializer::class))
-        ->attribute('bookmarked', function (PostSerializer $serializer, Post $post): bool {
-            BookmarkablePost::setStateUser($serializer->getActor());
-
-            // This will use either a newly retrieved relationship based on the state above,
-            // or a previously eager-loaded relationship (ListPostsController, ShowDiscussionController)
-            return !is_null($post->bookmarkState);
-        }),
-
-    (new Extend\Event())
-        ->listen(Saving::class, Listeners\SavePost::class),
-
-    (new Extend\Filter(PostFilterer::class))
-        ->addFilter(Filters\BookmarkedGambit::class)
-        ->addFilterMutator(Filters\Mutator::class),
-
-    (new Extend\ModelVisibility(Discussion::class))
-        ->scope(Access\ScopeDiscussionVisibility::class),
+    (new Extend\SearchDriver(DatabaseSearchDriver::class))
+        ->addFilter(PostSearcher::class, Filters\BookmarkedFilter::class),
 
     (new Extend\Settings())
         ->serializeToForum('post-bookmarks.buttonPosition', 'post-bookmarks.buttonPosition')
