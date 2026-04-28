@@ -27,6 +27,21 @@
             "ClarkWinkelmann\\PostBookmarks\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "ClarkWinkelmann\\PostBookmarks\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "flarum/testing": "^1.0.0"
+    },
+    "scripts": {
+        "test": [
+            "@test:integration"
+        ],
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php"
+    },
     "extra": {
         "flarum-extension": {
             "title": "Post Bookmarks",
